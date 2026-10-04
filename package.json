@@ -1,0 +1,19 @@
+{
+  "name": "jaam",
+  "version": "1.0.0",
+  "description": "Jaam — Persian AI Bridge | Connect Claude Code to any AI provider",
+  "type": "module",
+  "main": "index.js",
+  "bin": { "jaam": "index.js" },
+  "scripts": { "start": "node index.js" },
+  "engines": { "node": ">=18" },
+  "dependencies": {
+    "boxen": "^7.1.1",
+    "chalk": "^5.3.0",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "open": "^10.1.0"
+  },
+  "license": "MIT",
+  "author": "imatix"
+}
