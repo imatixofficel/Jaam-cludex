@@ -6,11 +6,13 @@ import boxen from 'boxen';
 import open from 'open';
 import fs from 'fs';
 import path from 'path';
+import os from 'os';
 import { fileURLToPath } from 'url';
 
 dotenv.config();
 const DIR = path.dirname(fileURLToPath(import.meta.url));
-const CFG = path.join(DIR, 'config.json');
+const HOME = path.join(os.homedir(), '.jaam');
+const CFG = path.join(HOME, 'config.json');
 const PORT = Number(process.env.PORT) || 8787;
 const gold = chalk.hex('#FFD700'), violet = chalk.hex('#8B6CFF'), soft = chalk.hex('#C9B8FF');
 
@@ -30,7 +32,7 @@ console.log(soft('   «سال‌ها دل طلب جام جم از ما می‌ک
 // ───────── Config ─────────
 const DEFAULTS = { provider: process.env.DEFAULT_PROVIDER || 'openai', apiKey: '', baseUrl: 'https://api.openai.com/v1', model: 'gpt-4o', active: false };
 const loadCfg = () => { try { return { ...DEFAULTS, ...JSON.parse(fs.readFileSync(CFG, 'utf8')) }; } catch { return { ...DEFAULTS }; } };
-const saveCfg = c => fs.writeFileSync(CFG, JSON.stringify(c, null, 2));
+const saveCfg = c => { fs.mkdirSync(HOME, { recursive: true }); fs.writeFileSync(CFG, JSON.stringify(c, null, 2)); };
 const mask = k => (k ? k.slice(0, 4) + '••••••••' + k.slice(-3) : '');
 
 // ───────── Protocol conversion ─────────
@@ -106,6 +108,7 @@ async function streamToAnthropic(up, res, model) {
 // ───────── Server ─────────
 const app = express();
 app.use(express.json({ limit: '50mb' }));
+app.get('/background.jpg', (req, res, next) => { const f = path.join(HOME, 'background.jpg'); fs.existsSync(f) ? res.sendFile(f) : next(); });
 app.use(express.static(path.join(DIR, 'public')));
 app.use((req, _res, next) => { if (req.path !== '/api/config') console.log(violet(`  ➜ ${new Date().toLocaleTimeString()}  ${req.method} ${req.path}`)); next(); });
 
